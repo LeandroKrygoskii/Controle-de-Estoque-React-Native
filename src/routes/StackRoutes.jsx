@@ -5,17 +5,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import TabRoutes from './BottomRoutes';
 import CadProduto from '../pages/CadProduto';
 import Consulta from '../pages/Consulta';
-import Movimentacao from '../pages/Movimentacao';
-import Entrada from '../pages/Entrada';
 import  Saida  from '../pages/Saida';
 import CadCategoria from '../pages/CadCategoria';
-import Clientes from '../pages/Clientes';
+import Chart from '../pages/Charts';
 import EstoqueBaixo from '../pages/EstoqueBaixo';
 import ProductDetail from '../pages/ProductDetail';
 
 import { Entypo } from '@expo/vector-icons';
 import NewQuantidade from '../pages/NewQuantidade';
 import Relatorio from '../pages/Relatorio';
+import Entrada from '../pages/Entrada';
 
 const myOptions = {
   title: "Detalhes", 
@@ -56,17 +55,6 @@ const Routes = () => {
                       options={{...myOptions,title: "Consultar"}} 
                     />
 
-                    <Screen                      
-                      name="Movimentacao"
-                      component={Movimentacao}
-                      options={{...myOptions,title: "Movimentação"}} 
-                    />
-
-                    <Screen                      
-                      name="Entrada"
-                      component={Entrada}
-                      options={{...myOptions,title: "Entrada"}} 
-                    />
 
                     <Screen                      
                       name="Saida"
@@ -82,26 +70,32 @@ const Routes = () => {
 
                      <Screen                      
                       name="Chart"
-                      component={Clientes}
+                      component={Chart}
                       options={{...myOptions,title: "Gráficos"}} 
                     /> 
 
                     <Screen                      
                       name="Estoque Baixo"
                       component={EstoqueBaixo}
-                      options={{...myOptions,title: "Baixo"}} 
+                      options={{headerShown:false}}  
                     />
 
                     <Screen                      
                       name="Detalhes do Produto"
                       component={ProductDetail}
-                      options={{...myOptions,title: "Detalhess"}}                  
+                      options={{headerShown:false}}                  
                     />
 
                     <Screen                      
-                      name="Entrada estoque"
+                      name="Entrada Estoque"
+                      component={Entrada}
+                      options={{headerShown:false}}                    
+                    />
+
+                    <Screen                      
+                      name="Nova quantidade"
                       component={NewQuantidade}
-                      options={{...myOptions,title: "Entrada no estoque"}}                  
+                      options={{headerShown:false}}                   
                     />
 
                     <Screen                      

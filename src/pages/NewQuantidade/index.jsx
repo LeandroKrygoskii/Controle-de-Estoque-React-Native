@@ -14,7 +14,9 @@ import {
   ViewBtn,
   Column,
   TextBtn,
-  CardTitle
+  CardTitle,
+  CardText,
+  TxtBtnConfirm
 
 } from './style';
 import {useRoute} from '@react-navigation/native';
@@ -56,11 +58,12 @@ export default function NewQuantidade(){
     
     return(
       <Container>
-          <Title>Movimentação de estoque</Title>
+        
 
            <DataArea>
+             <CardText>
               <CardTitle>{product.nome}</CardTitle>
-    
+             </CardText>
              <SubTitle>Código: {product.codBar}</SubTitle>
              <SubTitle>Valor: {product.valor}</SubTitle>
              <SubTitle>Em estoque: {product.quantidade}</SubTitle>
@@ -105,7 +108,7 @@ export default function NewQuantidade(){
 
 
            <Btns onPress={() => handleConfirm()}>
-             <Title>Salvar</Title>
+             <TxtBtnConfirm>Salvar</TxtBtnConfirm>
            </Btns>
       </Container>
     )

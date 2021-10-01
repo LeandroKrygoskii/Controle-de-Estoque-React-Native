@@ -3,9 +3,9 @@ import styled from 'styled-components/native';
 
 export const Container = styled.View`
  flex:1;
- 
+ background-color: #f2f2f2;
  align-items: center;
- justify-content: space-around;
+ justify-content: space-evenly;
 `;
 
 export const Title = styled.Text`
@@ -16,8 +16,18 @@ export const Title = styled.Text`
  color: #000000;
 `;
 
+export const CardText = styled.View`
+ background-color: #fff022;
+ width: 100%;
+ border-radius: 10px;
+ align-items: center;
+`;
+
 export const CardTitle = styled.Text`
- color: #fff022;
+ color: #333232;
+ font-size: 20px;
+ font-weight: 700;
+ letter-spacing: 2px;
 `;
 
 export const TextBtn = styled.Text`
@@ -25,13 +35,20 @@ export const TextBtn = styled.Text`
  font-weight: bold;
 `
 
-export const SubTitle = styled.Text`
+export const TxtBtnConfirm = styled.Text`
+ color: #333232;
+ font-weight: 700;
+ font-size: 22px;
+`;
 
+export const SubTitle = styled.Text`
+ color: #ffff;
+ padding: 5px;
 `;
 
 export const DataArea = styled.View`
- background-color: #c20e0e;
- width: 80%;
+ background-color: #333232;
+ width: 90%;
  padding:16px 24px;
  border-radius: 12px;
 `;
@@ -47,22 +64,24 @@ export const Btns = styled.TouchableOpacity`
 `;
 
 export const Main = styled.View`
- width: 100%;
-
+ width: 90%;
+ border-radius: 10px;
+ background-color: #333232;
  padding: 10px;
  align-items: center;
  flex-direction: row;
- justify-content:space-around;
+ justify-content:space-evenly;
 `;
 
 export const Btn1 = styled.TouchableOpacity`
-    background-color: green;
+    background-color: #333232;
+    border: 1px solid #fff022;
     flex:0.3;
     padding:10px;
     
     border-radius: 10px;
     align-items: center;
-    margin-left: 10px;
+    
     
 `;
 
@@ -73,7 +92,8 @@ export const ViewBtn = styled.View`
 `;
 
 export const Btn2 = styled.TouchableOpacity`
-    background-color: green;
+    background-color: #333232;
+    border: 1px solid #fff022;
     flex:0.3;
     padding:10px;
     
@@ -85,18 +105,18 @@ export const Btn2 = styled.TouchableOpacity`
 
 
 export const Btn3 = styled.TouchableOpacity`
-    background-color: #c5190d;
+    border:1px solid #fff022;
     flex:0.3;
     padding:10px;
    
-    margin-left: 10px;
+    
     border-radius: 10px;
     align-items: center;
     
 `;
 
 export const Btn4 = styled.TouchableOpacity`
-    background-color: #c5190d;
+    border:1px solid #fff022;
     flex:0.3;
     padding:10px;
    

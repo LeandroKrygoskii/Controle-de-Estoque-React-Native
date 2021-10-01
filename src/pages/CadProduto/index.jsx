@@ -402,7 +402,7 @@ export default function CadProduto({navigation}){
                           type={'money'}
                           options={{
                               precision: 2,
-                              separator: '.',
+                              separator: ',',
                               delimiter: '.',
                               unit: 'R$',
                               suffixUnit: ''

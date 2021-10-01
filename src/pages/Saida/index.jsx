@@ -23,7 +23,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import InputComponent from '../../components/InputComponent';
 
 
-export default function Entrada() {
+export default function Saida() {
    
     const [search, setSearch] = useState();
     const [quantity, setQuantity] = useState('4');
@@ -39,7 +39,7 @@ export default function Entrada() {
             return(
                 <ViewProduct>
                 <Product>
-                   <NameProduct>Fogão</NameProduct>
+                   <NameProduct>teste</NameProduct>
                    <PriceProduct>Preço: R$25.50</PriceProduct>
                   <ViewQuantity>
                     <QuantityProduct>Estoque : </QuantityProduct>

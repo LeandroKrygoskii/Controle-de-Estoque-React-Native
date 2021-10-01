@@ -36,7 +36,7 @@ export default function Home(){
               title="Movimentação"
               icon="database"
               iconColor='#0c1b54'
-              onPress={() => navigation.navigate("Entrada")}
+              onPress={() => navigation.navigate("Entrada Estoque")}
             />
 
             <CardHome

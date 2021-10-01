@@ -16,7 +16,8 @@ import { Container,
     ProductContentRow,
     ViewScan,
     BtnScanAgain,
-    TextBtn
+    TextBtn,
+    BtnIconAlert
  } from './style';
 
 import InputComponent from '../../components/InputComponent';
@@ -105,13 +106,26 @@ export default function Consulta(){
     function handleDetailProduct (product){
         navigation.navigate("Detalhes do Produto" , { product })
     }
+     
+    
 
+    const ComponentIconAlert = () => {
+
+        return(
+            <BtnIconAlert onPress={() => Alert.alert('Estoque baixo!')}>
+                <MaterialCommunityIcons name="comment-alert" size={24} color="red" />
+            </BtnIconAlert>
+        )
+    }
 
     const renderItem = useCallback (({item}) =>  
         <Product onPress={() => handleDetailProduct(item)} key={item?.idProduto}>
-            <NameProduct>{item?.nome}</NameProduct>
-   
+            <ProductContentRow>
+             <NameProduct>{item?.nome}</NameProduct>
+             {item.quantidade <= item.qtMin ? <ComponentIconAlert/> : null}
+            </ProductContentRow> 
                 <QuantityProduct>Estoque: {item?.quantidade}</QuantityProduct>
+             
         </Product>, []
     ) 
 
@@ -130,9 +144,9 @@ export default function Consulta(){
     }
 
     async function checkMultiPermissions() {
-        const { status } = await BarCodeScanner.getPermissionsAsync(
+        const { status } = await BarCodeScanner.getPermissionsAsync();
           
-        );
+        
         if (status !== 'granted') {
          console.log("Nao tem permissao")
         }
@@ -250,14 +264,7 @@ export default function Consulta(){
            </>
              
           }
-           
-            
-            
-
-            
-         
-        
-            
+                      
         </Container>
     )
 }

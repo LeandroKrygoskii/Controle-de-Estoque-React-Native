@@ -52,6 +52,11 @@ export const Product = styled.TouchableOpacity`
 
 export const ProductContentRow = styled.View`
  flex-direction: row;
+ align-items: center;
+`;
+
+export const BtnIconAlert = styled.TouchableOpacity`
+ 
 `;
 
 export const ProductContentColum = styled.View`
@@ -80,7 +85,7 @@ export const QuantityProduct = styled.Text`
 export const BtnSearch = styled.TouchableOpacity`
   width: 48%;
   height: 65px;
-  background-color: #fff022;
+  
   margin-left: 16px;
   border-radius: 15px;
   align-items: center;

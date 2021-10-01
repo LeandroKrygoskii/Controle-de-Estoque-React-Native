@@ -1,61 +1,67 @@
 import styled from 'styled-components/native';
 
-
-export const Container = styled.SafeAreaView`
+export const Container = styled.View`
  flex:1;
+ background-color: #f2f2f2;
  align-items: center;
  
 `;
-
 
 export const SearchArea = styled.View`
  
  width: 100%;
- align-items: center;
- padding:10px;
- justify-content: center;
- flex-direction: row;
+
+ 
+ flex-direction: column;
  margin-top: 8px;
+
+`;
+
+export const SearchRow = styled.View`
+ flex-direction: row;
+ width: 100%;
+ align-items: flex-start;
+ 
 `;
 
 export const ViewIcon = styled.TouchableOpacity`
- margin-bottom: 34px;
- margin-left: 5px;
- border-radius: 10px;
- background-color: #22ff7e;
  padding:10px;
 `;
 
+
 export const BtnScan = styled.TouchableOpacity`
- 
+
 `;
 
 export const ViewProduct = styled.View`
  
  flex:1;
- align-items: center;
  width: 100%;
  padding: 16px 24px;
 `;
-
-export const ViewProductList = styled.View`
- 
- flex:1;
- width: 100%;
- padding: 16px 24px;
-`;
-
 
 export const Product = styled.TouchableOpacity`
   width: 100%;
   
   padding:10px;
-  
-  background-color: #e2e2e2;
+  margin-bottom: 12px;
+  border-bottom-width: 1px;
+  border-bottom-color: #e2e2e2;
   border-radius: 10px;
-  margin-bottom: 10px;
 `;
 
+export const ProductContentRow = styled.View`
+ flex-direction: row;
+ align-items: center;
+`;
+
+export const BtnIconAlert = styled.TouchableOpacity`
+ 
+`;
+
+export const ProductContentColum = styled.View`
+  flex-direction: column;
+`;
 
 export const NameProduct = styled.Text`
  font-size: 22px;
@@ -75,55 +81,48 @@ export const QuantityProduct = styled.Text`
  padding:10px;
 `;
 
-export const ViewQuantity = styled.View`
- 
- flex-direction: row;
- align-items: center;
-`;
 
-export const InputQuantity = styled.TextInput`
- background-color: #fff;
- height: 90%;
- margin-top: 2px;
- border-radius: 10px;
- width: 20%;
- padding:10px;
- text-align:center;
-`;
-
-export const Btn1 = styled.TouchableOpacity`
-    background-color: green;
-    flex:0.3;
-    padding:10px;
-    width: 30px;
-    border-radius: 10px;
-    align-items: center;
-    margin-left: 10px;
-    
-`;
-
-export const Btn2 = styled.TouchableOpacity`
-    background-color: green;
-    flex:0.3;
-    padding:10px;
-    margin-left: 10px;
-    border-radius: 10px;
-    align-items: center;
-    
-`;
-
-export const BtnCadastrar = styled.TouchableOpacity`
-  height: 56px;
-  width: 60%;
+export const BtnSearch = styled.TouchableOpacity`
+  width: 48%;
+  height: 65px;
+  
+  margin-left: 16px;
   border-radius: 15px;
-  justify-content: center;
   align-items: center;
-  background-color: #32B768;
-  margin-top: 48px;
+  justify-content: space-between;
+  flex-direction: column;
+  
+  
+`;
+
+export const TxtSearchAll = styled.Text`
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+`;
+
+export const SectionBtns = styled.View`
+ width: 80%;
+ flex-direction: row;
+ justify-content: space-between;
  
+`;
+
+
+export const ViewScan = styled.View`
+ flex:1;
+ border:1px solid red;
+ flex-direction: column;
+ justify-content: flex-end;
+`;
+
+export const BtnScanAgain = styled.TouchableOpacity`
+ 
+ background-color: #62B1F6;
+ padding: 8px 16px;
+ margin-top: 10px;
 `;
 
 export const TextBtn = styled.Text`
- color: #FFFFFF;
- font-size: 20px;
+ font-weight: bold;
 `;

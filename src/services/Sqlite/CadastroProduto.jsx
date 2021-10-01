@@ -162,6 +162,17 @@ const selectAllQuantity = () => {
     });
 };
 
+const selectQuantityPerCategory = () => {
+    return new Promise ((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT c.idCategoria, c.nome , c.barColor, count(p.idProduto) AS quantidade FROM categoria c LEFT JOIN produto p ON p.id_categoria = c.idCategoria GROUP BY c.idCategoria, c.nome ORDER BY c.nome;" ,[],
+                (_, { rows }) => resolve(rows._array),
+                (_, error) => reject(error) // erro interno em tx.executeSql
+            );
+        });
+    });
+};
+
 /**
  * REMOVE UM REGISTRO POR MEIO DO ID
  * - Recebe o ID do registro;
@@ -194,6 +205,7 @@ export default {
     deletebyid,
     findbyname,
     updateQuantity,
-    selectAllQuantity
+    selectAllQuantity,
+    selectQuantityPerCategory
 }
  

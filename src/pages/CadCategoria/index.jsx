@@ -22,7 +22,9 @@ export default function CadCategoria(){
 
          }else{
             console.log(categoria);
-            const response = await Categoria.createCategoria(categoria);
+            const randomColor = ('#' + ((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 7)
+            
+            const response = await Categoria.createCategoria(categoria, randomColor);
 
             if(response != 0){
                 Alert.alert("Sucesso", "Cadastro Efetuado com sucesso. Agora sua nova categoria aparecerá ao cadastrar um novo produto.");
@@ -41,7 +43,7 @@ export default function CadCategoria(){
 
            <ViewForm>             
                 <InputComponent 
-                    holder="ex: (Eletrodomésticos, Movéis, etc...)"
+                    holder="ex: (Eletrônicos, Móveis, etc...)"
                     value={categoria}
                     onChangeText={t => setCategoria(t)}
                 />
