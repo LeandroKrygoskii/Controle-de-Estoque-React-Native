@@ -11,22 +11,21 @@ export default function PickerCategoria(props) {
     
     //const [selectCategoria, setSelectCategoria] = useState();
     const [selectedCategoriadata, setSelectCategoriadata] = useState([]);
+    //const [categorieID, setCategorieID] = useState(props.categoriesID);
 
     const nav = useNavigation();
 
     useEffect(() => {
         props.navigation.addListener('focus', (e) => {
             getCategoria();
-           })
-       
-      },[props.navigation])
+        })   
+    },[props.navigation])
 
       useEffect(() => {
-          getCategoria();
-         
+          getCategoria();     
       },[])
 
-
+   
     async function getCategoria(){
             
         const response = await Categorias.selectAll();
@@ -34,8 +33,9 @@ export default function PickerCategoria(props) {
         setSelectCategoriadata(response);
         //console.log(response);
       
-      }
-
+    }
+     
+   
 
     function newCategoria() {
         nav.navigate('Nova Categoria')
@@ -46,17 +46,21 @@ export default function PickerCategoria(props) {
        <View style={props.selectCategoria ?  styles.Container2 : styles.Container }> 
          
           <TouchableOpacity onPress={newCategoria} style={styles.BtnNewCategoria}>
-          <Feather name="plus-square" size={24} color="#52665A" />
+             <Feather name="plus-square" size={24} color="#52665A" />
           </TouchableOpacity>    
             <Picker
             selectedValue={props?.selectCategoria}
+            
             onValueChange={
                 props?.onvalueChange
             }
             style={styles.pickerStyle}
             >   
+
+            <Picker.Item key={'test'} label={'Categorias'} color="#00000090" value={0}/>
             {selectedCategoriadata.map((item) => (
-                <Picker.Item key={item?.idCategoria} label={item?.nome} value={item?.idCategoria}/>
+               
+                <Picker.Item key={item?.idCategoria} label={ item?.name} value={item?.idCategoria}/>
             ))}
                
             </Picker>
@@ -90,9 +94,9 @@ const styles = StyleSheet.create({
        
         color: '#52665A',      
         fontSize: 18,
-        width: '100%',      
-        padding: 10,
-        marginRight: 30,
+        width: '90%',      
+        
+        
     },
   
     BtnNewCategoria:{

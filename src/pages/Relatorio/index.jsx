@@ -1,55 +1,161 @@
 import React,{useState, useEffect} from 'react';
-import {Container} from './style';
+import {
+  Container,
+  Btn,
+  TxtBtn,
+  Header,
+  Title
+} from './style';
 
-//import {RNHTMLtoPDF} from 'react-native-html-to-pdf';
-import {BarCodeScanner} from 'expo-barcode-scanner';
-import * as Permissions from 'expo-permissions';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, FlatList } from 'react-native';
 
+import Produtos from '../../services/Sqlite/CadastroProduto';
+import { AntDesign } from '@expo/vector-icons';
+
+import * as Print from 'expo-print';
+
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing'
 
 export default function Relatorio(){
 
+  const [data, setData] = useState([]);
+   
+   useEffect(() => {
+    getProducts();
+   }, [])
+   
 
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+   const getProducts = async () => {
+        
+    const res = await Produtos.selectAll();
+    setData(res);
+    
+   }
 
-  useEffect(() => {
-    (async () => {
-        const { status } = await BarCodeScanner.requestPermissionsAsync();
-        setHasPermission(status === 'granted');
-      })();
-  },[])
+   const renderItem = ({item}) => (
+     <View key={item.idProduto}>
+       <Text style={styled.textColor}>
+       Produto: {item.nome}
+       </Text>
 
+       <Text style={styled.textColor}>
+        Código: {item.codBar}
+       </Text>
 
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  };
+       <Text style={styled.textColor}>
+       Quantidade: {item.quantidade}
+       </Text>
 
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+       <Text style={{marginBottom:10, fontWeight:'700'}}>
+       Valor: R$ {item.valor}
+       </Text>
+       
+       <View style={styled.hr}/>
+     </View>
+   )
+  
+ 
+  const createAndSavePDF = async (html) =>{
+    try {
+      const url = await Print.printToFileAsync({ html: html })
+      
+      const pdfName = `${url.uri.slice(
+        0,
+        url.uri.lastIndexOf('/') + 1
+      )}EstoqueRelatório_${Math.floor(Math.random() * 256)}.pdf`
+      
+      await FileSystem.moveAsync({from: url.uri, to: pdfName});
+      sharePdf(pdfName)
+     
+     }  
+     catch (error) {
+      console.log(error)
+    }
+     
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+
+  const sharePdf = async (url) => {
+       await Sharing.shareAsync(url);
   }
+ 
+  const loop = data.map(prod => 
+    `
+     <div>
+      <div>Produto: ${prod.nome}</div>
+      <div>Código: ${prod.codBar}</div>
+      <div>Quantidade: ${prod.quantidade}</div>
+      <div>Valor: R$ ${prod.valor}</div>
+     </div>
+     <hr/>
+    `  
+  )
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <style> 
+    body{   
+    }
+     .test{
+       color: #000;
+       text-align: center;
+     }
+    
+     .text{
+       color: #000;
+       
+     }
+     .teste{  
+         
+     }
+    </style>
+    <body>
+       <h1 class="test">Relatório produtos</h1>
+       
+        <div id="teste1" class="teste"> 
+          ${loop}
+        </div>     
+    </body>
+    </html>
+  `
+
 
     return(
         
+     <Container>
 
-            <View
-                style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                }}>
-                <BarCodeScanner
-                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                    style={StyleSheet.absoluteFillObject}
-                />
+       <Header>
+        <Title>Relatório produtos</Title>
+        <Btn onPress={() => createAndSavePDF(htmlContent)}>
+        <AntDesign name="sharealt" size={24} color="white" />
+            <TxtBtn>
+               PDF
+            </TxtBtn>
+          </Btn>
+       </Header>
+        
 
-                {scanned && <Button title={'Clique para escanear novamente'} onPress={() => setScanned(false)} />}
-            </View>
+        <FlatList 
+         data={data}
+         renderItem={renderItem}
+         keyExtractor={item => String(item.idProduto)}
+        />
+     </Container>
+
         
 
     )
 }
+
+const styled = StyleSheet.create({
+  hr:{
+    borderWidth:1,
+    borderColor: '#ccc',
+    marginBottom:10,
+  },
+  textColor:{
+   color: '#000',
+   fontWeight:'700',
+  }
+})

@@ -49,7 +49,7 @@ export default function Home(){
 
         <CardArea>
             <CardHome
-              title="Gráficos"
+              title="Gráfico"
               icon="pie-chart"
               iconColor='#118d8b'
               onPress={() => navigation.navigate("Chart")}

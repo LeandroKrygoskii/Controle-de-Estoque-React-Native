@@ -10,7 +10,7 @@ export default function InputComponent(props) {
        placeholderTextColor='#738078'
        value={props.value}
        onChangeText={props.onChangeText}
-       
+      
       />
       
    </InputArea>

@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <> 
-       <StatusBar style='light' backgroundColor="#c3c3c3"/>
+       <StatusBar style='light' backgroundColor="#0e9e6e"/>
       
        <Routes/>
     </>

@@ -9,7 +9,7 @@ export const InputArea = styled.View`
  justify-content: flex-start;
  border:1px solid #c3c4c4;
  margin-left: 5%;
- 
+ border-radius: 10px;
 `;
 
 export const Input = styled.TextInput`

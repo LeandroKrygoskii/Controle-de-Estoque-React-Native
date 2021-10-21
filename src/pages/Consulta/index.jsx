@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import { Container, 
     SearchRow, 
     SearchArea, 
@@ -21,21 +21,17 @@ import { Container,
  } from './style';
 
 import InputComponent from '../../components/InputComponent';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Produto from '../../services/Sqlite/CadastroProduto';
 import { Alert ,FlatList,StyleSheet,Text,Dimensions } from 'react-native';
 import { useEffect } from 'react';
-import AutoComplete from 'react-native-autocomplete-input';
 import { FontAwesome } from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
-import {BarCodeScanner,BarCodeBounds , BarCodeScannerResult} from 'expo-barcode-scanner';
-import * as Permissions from 'expo-permissions';
+import {BarCodeScanner} from 'expo-barcode-scanner';
 import BarcodeMask from 'react-native-barcode-mask';
 
-//Components
-import ProductCard from '../../components/ProductCard';
-import { useCallback } from 'react';
+
+
 
 export default function Consulta(){
     
@@ -58,18 +54,19 @@ export default function Consulta(){
     } ,[])
 
     const searchText = (e) => {
-     let text = e.toLowerCase();
-
-     let filterData = data.filter((item) =>{
-         console.log(item.nome);
-         if(item.codBar == text){
-             return item
-         }
-         return item.nome.toLowerCase().match(text)
-     })
-
-     setfilterData(filterData);
-     //console.log(filterDatas)
+     
+        
+            let text = e.toLowerCase();
+            let filterData = data.filter((item) =>{
+                //console.log(item.nome);
+                if(item.codBar == text){
+                    return item
+                }
+                return item.nome.toLowerCase().match(text)
+            })
+            setfilterData(filterData);
+       
+     
     }
 
     const searchAll = () => {
@@ -95,7 +92,7 @@ export default function Consulta(){
             const response = await Produto.selectAll();
             if(response !=""){
                 setData(response);
-                console.log(data)
+                //console.log(data)
             }
             else{
                 Alert.alert("Você ainda não tem nenhum produto cadastrado!")
@@ -119,7 +116,7 @@ export default function Consulta(){
     }
 
     const renderItem = useCallback (({item}) =>  
-        <Product onPress={() => handleDetailProduct(item)} key={item?.idProduto}>
+        <Product key={item.idProduto} onPress={() => handleDetailProduct(item)}>
             <ProductContentRow>
              <NameProduct>{item?.nome}</NameProduct>
              {item.quantidade <= item.qtMin ? <ComponentIconAlert/> : null}
@@ -133,26 +130,23 @@ export default function Consulta(){
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     
-    useEffect(() => {
-        checkMultiPermissions();
+    // useEffect(() => {
+    //     checkMultiPermissions();
               
-    },[])
+    // },[])
 
     const scanCodeBtn = async () => {
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         setHasPermission(status === 'granted');
+
+        if(status === 'granted'){
+            setShowView(true)
+        }
     }
 
     async function checkMultiPermissions() {
         const { status } = await BarCodeScanner.getPermissionsAsync();
-          
-        
-        if (status !== 'granted') {
-         console.log("Nao tem permissao")
-        }
-        else{
-            console.log("ja tem permissao")
-        }
+        return status;
       }
   
   
@@ -177,10 +171,20 @@ export default function Consulta(){
     };
 
     const test = async () => {
-        await scanCodeBtn();
-        setShowView(true);
-        console.log(showView);
+       const res = await checkMultiPermissions();
+        
+        if(res === 'granted'){
+            setShowView(true);
+        }else{
+           await scanCodeBtn();
+        }
     }
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, SetItemsPerPage] = useState(5);
+    
+
+
    
     // if (hasPermission === null) {
     //   return <Text>Requesting for camera permission</Text>;
@@ -190,7 +194,7 @@ export default function Consulta(){
     // }
    
     return(
-        <Container>
+        <Container style={showView ? styles.container : ''}>
              
              {showView &&  
               
@@ -200,7 +204,7 @@ export default function Consulta(){
                         style={[StyleSheet.absoluteFillObject, styles.container]}                
                     >
                    
-                    <BarcodeMask edgeColor="#ee2c25" showAnimatedLine/>
+                    <BarcodeMask edgeColor="#62B1F6" showAnimatedLine/>
                     </BarCodeScanner>
                     {scanned && <BtnScanAgain onPress={() => setScanned(false)}>
                                      <TextBtn>Escanear novamente</TextBtn>
@@ -214,13 +218,14 @@ export default function Consulta(){
             <SearchArea>
              <SearchRow>
                 <InputComponent 
-                holder="Pesquise pelo nome do Produto..."
+                holder="Pesquisar..."
                 value={searchName , searchcod}
                 onChangeText={t => {    
-
-                    setSearchName(t);
-                    searchText(t);
-                    setSearchcod(t);
+                                   
+                        setSearchName(t);
+                        searchText(t);
+                        setSearchcod(t);
+                                   
                 }}
                 />
 
@@ -253,11 +258,11 @@ export default function Consulta(){
 
             <ViewProduct>
             <FlatList 
-            data={filterDatas}
+                data={filterDatas}
                 keyExtractor={item => String(item.idProduto)}                     
                 renderItem={renderItem}           
                 showsVerticalScrollIndicator={false}
-                onEndReachedThreshold={0.1}                        
+                                     
                 />             
             </ViewProduct>
                     
@@ -273,9 +278,9 @@ const styles = StyleSheet.create({
     
         container: {
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-   
+            height: Dimensions.get('window').height,
+            width :Dimensions.get('window').width,
+            marginTop: 0,
         },
     
         title: {

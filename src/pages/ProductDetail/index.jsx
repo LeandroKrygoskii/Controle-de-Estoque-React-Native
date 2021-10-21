@@ -24,19 +24,35 @@ import {Container,
    TextBtnMais,
    MoreInfo,
    TextInfo,
-   MoreInfoTitle
+   MoreInfoTitle,
+   DivRow,
+   BtnIcon,
+   DivTitle,
+   TitleData,
+   CardTitle,
+   ScrollHeader,
+   MainHeader
 
 } from './style';
+import { Alert } from 'react-native';
 import { useRoute , useNavigation} from '@react-navigation/core';
 import ImgBox from '../../images/box4.png';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Categoria from '../../services/Sqlite/Categoria';
 
+//DataBase
+import Categoria from '../../services/Sqlite/Categoria';
+import Produtos from '../../services/Sqlite/CadastroProduto';
+
+//icons
+import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+//intl conversor para moeda
 import intl from 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
 
+//modal
 import { Modalize } from 'react-native-modalize';
 
 
@@ -44,6 +60,14 @@ export default function ProductDetail(){
    
    const [categoriaProduto, setCategoriaProduto] = useState([]);
    const [categoriaName, setCategoriaName] = useState();
+   const [quantidadeTotalEstoque, setQuantidadeTotalEstoque] = useState(0);
+
+   const navigation = useNavigation();
+
+    const route = useRoute();
+    const { product } = route.params;
+    const [arredondado , setArredondado] = useState();
+    const modalizeRef = useRef(null);
     
    useEffect(() => {
       async function fetchMyAPI(){
@@ -65,7 +89,7 @@ export default function ProductDetail(){
       const id = product.id_categoria;
       categoriaProduto.filter(cat => {
          if(cat.idCategoria == id){
-            setCategoriaName(cat.nome)
+            setCategoriaName(cat.name)
          }
          //cat.idCategoria.includes(id)               
       });
@@ -73,10 +97,7 @@ export default function ProductDetail(){
    }, [categoriaProduto])
     
 
-    const route = useRoute();
-    const { product } = route.params;
-    const [arredondado , setArredondado] = useState();
-    const modalizeRef = useRef(null);
+    
     //console.log(product.name)
     
 
@@ -92,68 +113,134 @@ export default function ProductDetail(){
     
     //pega o valor pela rota  
     const str = product.valor;
-    //retira o cifrão
-    const teste= str.replace('R$', '');
-    const removePointer = teste.replace('.', '');
-    const changeVirgula = removePointer.replace(',', '.')
-    //por fim converte para double
-    const result= parseFloat(changeVirgula);
-
+ 
+    const result= parseFloat(str);
+   
+     
     //total quantidade
     const totalValue = result * product.quantidade;
-    //console.log(totalValue);
-    const valorFormatado = intl.NumberFormat('pt-BR', {style: 'decimal'}).format(totalValue)
+    const valorFormatado = intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)
 
      //Total Peso
      const totalPeso = product.peso * product.quantidade
      const convertPeso = totalPeso.toFixed(1);
    //   
-   //   
-   //  
+   async function handleDelete(){
+         
+      Alert.alert("Deletar produto ❓", "Tem Certeza que deseja excluir esse produto?", [
+        {
+          text: 'Não ❌',
+          style: 'cancel',
+        },
+        {
+          text: 'Sim ✅',
+          onPress: async () =>{
+               console.log(product.idProduto)
+               try {
+                  const response = await Produtos.deletebyid(product.idProduto)
+                  console.log("responsee" + response);
+                  
+                  if(response > 0){
+                     Alert.alert('Sucesso', 'produto deletado')
+                     navigation.navigate("HomeScreen")
+                  }
+               } catch (error) {
+                  console.log("Algum erro : ", error)
+               }
+               
+          }
+        }
+      ]) 
+    }
 
+   
      
     return(
           <Container>
               <Header>
               
                <Content>
-                              
-                  <ViewImgProduct>
-                     <ImgProduct source={ImgBox}/>
-                     
-                  </ViewImgProduct>
-                  <ViewContentHeader>
-                     <ViewContentHeaderText>
-                        <Title>{product.nome}</Title>
-                        <SubTitle>Cód produto </SubTitle>
-                        <SubTitle style={{fontWeight:'700', color:"#1a1a1a"}}> {product.codBar} </SubTitle>
-                     </ViewContentHeaderText>
-                     
-                     <BtnMais onPress={onOpen}>
-                        <TextBtnMais >
-                           Mais 
-                        </TextBtnMais>
-                     </BtnMais>
-                  </ViewContentHeader>
-
+                <ScrollHeader showsVerticalScrollIndicator={false}>
+                   <MainHeader>                            
+                     <ViewImgProduct>
+                        <ImgProduct source={ImgBox}/>
+                        
+                     </ViewImgProduct>
+                     <ViewContentHeader>
+                        <ViewContentHeaderText>
+                           <Title>{product.nome}</Title>
+                           <SubTitle style={{marginTop:10}}>Cód produto </SubTitle>
+                           <SubTitle style={{fontWeight:'700', color:"#1a1a1a",marginBottom:12}}> {product.codBar} </SubTitle>
+                           <SubTitle>{product.descricao}</SubTitle>
+                        </ViewContentHeaderText>
+                        
+                        <BtnMais onPress={onOpen}>
+                           <TextBtnMais >
+                              Mais 
+                           </TextBtnMais>
+                        </BtnMais>
+                     </ViewContentHeader>
+                  </MainHeader> 
+               </ScrollHeader> 
                   <Modalize
                    ref={modalizeRef}
                    snapPoint={220}
                   >
                      <MoreInfo>
-                        <MoreInfoTitle>Dados do produto</MoreInfoTitle>
-                        <TextInfo>
-                           Produto : {product.nome}
-                        </TextInfo>
-                        <TextInfo>
-                           Preço unidade : {product.valor}
-                        </TextInfo>
-                        <TextInfo>
-                           Peso unidade: {product.peso} kg
-                        </TextInfo>
-                        <TextInfo>
-                           Categoria : {categoriaName}
-                        </TextInfo>
+                        <DivRow>
+                         <MoreInfoTitle>Dados do produto</MoreInfoTitle>
+                         <BtnIcon onPress={() => handleDelete()}>
+                            <MaterialCommunityIcons name="delete-circle-outline" size={34} color="#d33d1b"/>
+                         </BtnIcon>
+                         
+                         <BtnIcon onPress={() => navigation.navigate('Atualizar produto', { product })}>
+                           <Feather name="edit" size={24} color="#26fc91" style={{marginRight:30}}/>
+                         </BtnIcon>
+                         
+                        </DivRow>
+                        
+                        <DivTitle>
+                           <CardTitle>
+                              <TitleData>Produto :</TitleData>
+                              <TextInfo>
+                               {product.nome}
+                            </TextInfo>
+                           </CardTitle>
+                           
+                          
+                        </DivTitle>
+                        
+                        <DivTitle>
+                           <CardTitle>
+                              <TitleData>Preço unidade :</TitleData>
+                              <TextInfo>
+                               {product.valor}
+                              </TextInfo>
+                           </CardTitle>                 
+                           
+                        </DivTitle>
+
+                        <DivTitle>
+                           <CardTitle>
+                              <TitleData>Peso unidade :</TitleData> 
+                              <TextInfo>
+                               {product.peso} kg
+                            </TextInfo>
+                           </CardTitle>
+                                             
+                           
+                        </DivTitle>
+
+                        <DivTitle>
+                           <CardTitle>
+                              <TitleData> Categoria :</TitleData>
+                              <TextInfo>
+                              {categoriaName}
+                           </TextInfo>
+                           </CardTitle>
+                        
+                           
+                        </DivTitle>
                      </MoreInfo>
                      
                   </Modalize>   
@@ -165,7 +252,7 @@ export default function ProductDetail(){
                 <ViewAlignCenter>
                    <Row2>
                    <DetailSquare>
-                     <Entypo name="archive" size={24} color="white" />
+                     <Entypo name="archive" size={28} color="white" />
                        <TextSquare>
                           {product.quantidade} 
                        </TextSquare>
@@ -175,22 +262,22 @@ export default function ProductDetail(){
                     </DetailSquare>
                     
 
-                    <DetailSquare>
-                      <MaterialCommunityIcons name="home-currency-usd" size={24} color="white" />
-                       <TextSquare>
+                    <DetailSquare >
+                      <MaterialCommunityIcons name="home-currency-usd" size={28} color="white" />
+                       <TextSquare style={{fontSize:18}}>
                           {valorFormatado}
                        </TextSquare>
                        <Unidade>
-                          R$
+                          valor total
                        </Unidade>
                     </DetailSquare>
                   </Row2>
 
                   <Row2>
                    <DetailSquare>
-                    <MaterialCommunityIcons name="weight-kilogram" size={24} color="white" />
+                    <MaterialCommunityIcons name="weight-kilogram" size={28} color="white" />
                        <TextSquare>
-                          {totalPeso}
+                          {convertPeso}
                        </TextSquare>
                        <Unidade>
                           kg
@@ -198,7 +285,7 @@ export default function ProductDetail(){
                     </DetailSquare>
                     
                     <DetailSquare>
-                    <AntDesign name="edit" size={24} color="white" />
+                    <AntDesign name="edit" size={28} color="white" />
                        <TextSquare>
                           Editar
                        </TextSquare>

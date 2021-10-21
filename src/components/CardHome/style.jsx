@@ -7,7 +7,7 @@ export const Container = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color: #fff;
+  background-color: #f0f2f1;
   
  
 `;
@@ -18,7 +18,7 @@ export const ContentArea = styled.View`
 
 export const Title = styled.Text`
  font-size: 16px;
- color: #767676;
+ color: #302e2e;
 
 `;
 

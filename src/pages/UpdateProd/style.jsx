@@ -2,12 +2,22 @@ import styled from 'styled-components/native';
 
 
 
-
+export const Keyboarder = styled.KeyboardAvoidingView`
+ flex:1;
+ width: 100%; 
+ 
+`;
 
 export const Main = styled.View`
  flex:1;
  width: 100%;
 
+`;
+
+export const TitleMain = styled.Text`
+ font-size: 22px;
+ font-weight: 700;
+ padding: 16px 24px;
 `;
 
 export const Container = styled.ScrollView`
@@ -36,33 +46,37 @@ export const InputArea = styled.View`
 `;
 
 export const InputCode = styled.TextInput`
-
- width: 80%;
+ 
  padding: 10px;
  font-size: 18px;
 `;
 
 export const Inputs = styled.TextInput`
  border-bottom-width: 2px;
- 
+
  border-color: #CFCFCF;
  color :#52665A;
  font-size: 18px;
  width: 100%;
- margin-top: 45px;
+ margin-top: 40px;
  padding: 10px;
 `;
 
-export const TitleMain = styled.Text`
- font-size: 22px;
- font-weight: 700;
- padding: 16px 24px;
+
+export const BtnCadastrar = styled.TouchableOpacity`
+  height: 56px;
+  width: 60%;
+  border-radius: 15px;
+  justify-content: center;
+  align-items: center;
+  background-color: #32B768;
+  margin-top: 42px;
 `;
 
-
-
-
-
+export const TextBtn = styled.Text`
+ color: #FFFFFF;
+ font-size: 20px;
+`;
 
 export const TouchableWithout = styled.TouchableWithoutFeedback`
 

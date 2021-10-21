@@ -42,7 +42,7 @@ const createProduto = (obj) => {
     return new Promise((resolve, reject) => {
          
         db.transaction((tx) => {
-             tx.executeSql("UPDATE music SET autor=? , cifra=?, ritmo=? WHERE id=?;", [obj.autor, obj.cifra, obj.ritmo, id],
+             tx.executeSql("UPDATE produto SET codBar=?, nome=? ,descricao=? , peso=? ,quantidade=? ,qtMin=? , valor=? ,id_categoria=? WHERE idProduto=?;", [obj.codBar, obj.nome, obj.descricao, obj.peso, obj.quantidade,obj.qtMin,obj.valor,obj.id_categoria, id],
              
                 (_, { rowsAffected }) => {
                     if (rowsAffected > 0) resolve(rowsAffected);
@@ -165,13 +165,59 @@ const selectAllQuantity = () => {
 const selectQuantityPerCategory = () => {
     return new Promise ((resolve, reject) => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT c.idCategoria, c.nome , c.barColor, count(p.idProduto) AS quantidade FROM categoria c LEFT JOIN produto p ON p.id_categoria = c.idCategoria GROUP BY c.idCategoria, c.nome ORDER BY c.nome;" ,[],
+            tx.executeSql("SELECT c.idCategoria, c.name , c.color, c.legendFontColor, c.legendFontSize, count(p.idProduto) AS quantidade FROM categoria c LEFT JOIN produto p ON p.id_categoria = c.idCategoria GROUP BY c.idCategoria, c.name ORDER BY c.name;" ,[],
                 (_, { rows }) => resolve(rows._array),
                 (_, error) => reject(error) // erro interno em tx.executeSql
             );
         });
     });
 };
+
+
+const selectCountAllProducts = () => {
+    return new Promise ((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT count(idProduto) as quantidade FROM produto;" ,[],
+                (_, { rows }) => resolve(rows._array),
+                (_, error) => reject(error) // erro interno em tx.executeSql
+            );
+        });
+    });
+}
+
+const selectSumAllQuantity = () => {
+    return new Promise ((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT SUM(quantidade) as total FROM produto;" ,[],
+                (_, { rows }) => resolve(rows._array),
+                (_, error) => reject(error) // erro interno em tx.executeSql
+            );
+        });
+    });
+}
+
+const selectSumAllPeso = () => {
+    return new Promise ((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT SUM((peso * quantidade)) as totalpeso FROM produto;" ,[],
+                (_, { rows }) => resolve(rows._array),
+                (_, error) => reject(error) // erro interno em tx.executeSql
+            );
+        });
+    });
+}
+
+
+const selectSumAllPreco = () => {
+    return new Promise ((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT SUM((valor * quantidade)) as totalpreco FROM produto;" ,[],
+                (_, { rows }) => resolve(rows._array),
+                (_, error) => reject(error) // erro interno em tx.executeSql
+            );
+        });
+    });
+}
 
 /**
  * REMOVE UM REGISTRO POR MEIO DO ID
@@ -183,12 +229,12 @@ const selectQuantityPerCategory = () => {
 
 
 const deletebyid = (id) => {
-    return new Promise((reject, resolve) => {
+    return new Promise((resolve, reject) => {
         db.transaction((tx) => {
-            tx.executeSql("DELETE FROM musica WHERE id=?", [id],
+            tx.executeSql("DELETE FROM produto WHERE idProduto=?", [id],
             
-                (_, { rowsAffected }) => {
-                    resolve(rowsAffected);
+                (_, { rowsAffected  }) => {
+                    if (rowsAffected) resolve(rowsAffected);
                 },
                 (_, error) => reject(error) // erro interno em tx.executeSql
                 
@@ -206,6 +252,10 @@ export default {
     findbyname,
     updateQuantity,
     selectAllQuantity,
-    selectQuantityPerCategory
+    selectQuantityPerCategory,
+    selectCountAllProducts,
+    selectSumAllQuantity,
+    selectSumAllPeso,
+    selectSumAllPreco
 }
  

@@ -43,29 +43,27 @@ export default function NewQuantidade(){
         {
           text: 'Sim ✅',
           onPress: async () =>{
+            if(quantity < 0) return alert("A quantidade não pode ser menor que zero.")
             const response = await Produtos.updateQuantity(product.idProduto, quantity)
             if(response > 0){
-             Alert.alert('estoque atualizado com sucesso')
-             navigation.navigate("Home")
+             Alert.alert('Sucesso ✅', 'estoque atualizado com sucesso')
+             navigation.navigate("HomeScreen")
             }
           }
         }
-      ])
-      
-      
-      
+      ]) 
     }
     
     return(
       <Container>
         
-
+        <Title>Movimentação</Title>
            <DataArea>
              <CardText>
               <CardTitle>{product.nome}</CardTitle>
              </CardText>
              <SubTitle>Código: {product.codBar}</SubTitle>
-             <SubTitle>Valor: {product.valor}</SubTitle>
+             <SubTitle>Valor:R$ {product.valor}</SubTitle>
              <SubTitle>Em estoque: {product.quantidade}</SubTitle>
            </DataArea>
          

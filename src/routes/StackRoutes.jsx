@@ -2,14 +2,15 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import TabRoutes from './BottomRoutes';
+
 import CadProduto from '../pages/CadProduto';
 import Consulta from '../pages/Consulta';
-import  Saida  from '../pages/Saida';
 import CadCategoria from '../pages/CadCategoria';
 import Chart from '../pages/Charts';
 import EstoqueBaixo from '../pages/EstoqueBaixo';
 import ProductDetail from '../pages/ProductDetail';
+import UpdateProduto from '../pages/UpdateProd';
+import Home from '../pages/Home';
 
 import { Entypo } from '@expo/vector-icons';
 import NewQuantidade from '../pages/NewQuantidade';
@@ -39,39 +40,34 @@ const Routes = () => {
                     <Screen 
                       options={{headerShown: false}}
                       name="HomeScreen"
-                      component={TabRoutes}
+                      component={Home}
                     />
 
                     <Screen                     
                       name="Cadastro de Produto"
                       component={CadProduto}
-                      options={{...myOptions,title: "Novo Produto"}} 
+                      options={{headerShown: false}} 
                     />
 
 
                     <Screen                      
                       name="Consulta"
                       component={Consulta}
-                      options={{...myOptions,title: "Consultar"}} 
+                      options={{headerShown: false}}
                     />
 
 
-                    <Screen                      
-                      name="Saida"
-                      component={Saida}
-                      options={{...myOptions,title: "Saída"}} 
-                    /> 
 
                     <Screen                      
                       name="Nova Categoria"
                       component={CadCategoria}
-                      options={{...myOptions,title: "Nova Categoria"}} 
+                      options={{headerShown: false}}
                     />  
 
                      <Screen                      
                       name="Chart"
                       component={Chart}
-                      options={{...myOptions,title: "Gráficos"}} 
+                      options={{headerShown: false}}
                     /> 
 
                     <Screen                      
@@ -97,11 +93,16 @@ const Routes = () => {
                       component={NewQuantidade}
                       options={{headerShown:false}}                   
                     />
+                      <Screen                      
+                      name="Atualizar produto"
+                      component={UpdateProduto}
+                      options={{headerShown:false}}                   
+                    />
 
                     <Screen                      
                       name="Relatorio"
                       component={Relatorio}
-                      options={{...myOptions,title: "Relatório"}}                  
+                      options={{headerShown:false}}                  
                     />
 
             </Navigator>

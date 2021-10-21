@@ -2,10 +2,10 @@ import styled from 'styled-components/native';
 
 export const Container = styled.SafeAreaView`
  flex:1;
- background-color: #f5f5f5;
+ background-color: #fff;
  padding: 20px;
  align-items: center;
- 
+ justify-content: center;
  
 `;
 
@@ -14,5 +14,6 @@ export const CardArea = styled.View`
  flex-direction: row;
  align-items: center;
  justify-content: space-around;
- margin-top: 24px;
+ margin-bottom: 28px;
+ 
 `;

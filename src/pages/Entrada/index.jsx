@@ -26,11 +26,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Produto from '../../services/Sqlite/CadastroProduto';
 import { Alert ,FlatList,StyleSheet,Text,Dimensions } from 'react-native';
 import { useEffect } from 'react';
-import AutoComplete from 'react-native-autocomplete-input';
 import { FontAwesome } from '@expo/vector-icons';
 import {useNavigation} from '@react-navigation/native';
 import {BarCodeScanner,BarCodeBounds , BarCodeScannerResult} from 'expo-barcode-scanner';
-import * as Permissions from 'expo-permissions';
 import BarcodeMask from 'react-native-barcode-mask';
 
 //Components
@@ -58,44 +56,33 @@ export default function Consulta(){
     } ,[])
 
     const searchText = (e) => {
-     let text = e.toLowerCase();
+     
+        if(e){
+            let text = e.toLowerCase();
 
-     let filterData = data.filter((item) =>{
-         console.log(item.nome);
-         if(item.codBar == text){
-             return item
-         }
-         return item.nome.toLowerCase().match(text)
-     })
-
-     setfilterData(filterData);
-     //console.log(filterDatas)
+            let filterData = data.filter((item) =>{
+                
+                if(item.codBar == text){
+                    return item
+                }
+                return item.nome.toLowerCase().match(text)
+            })
+            setfilterData(filterData);
+        }
+     
     }
 
     const searchAll = () => {
         setfilterData(data);
     }
 
-    const searchNumber = (e) => {
-        let number = e;
-   
-        let filterData = data.filter((item) =>{
-            if(item.codBar == number){
-                //console.log( "TESTE" + item)
-                return item
-            }   
-        })
-    
-        setfilterData(filterData)
-        
-    }
-
+  
     async function getProducts(){
        
             const response = await Produto.selectAll();
             if(response !=""){
                 setData(response);
-                console.log(data)
+               
             }
             else{
                 Alert.alert("Você ainda não tem nenhum produto cadastrado!")
@@ -135,10 +122,7 @@ export default function Consulta(){
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     
-    useEffect(() => {
-        checkMultiPermissions();
-              
-    },[])
+  
 
     const scanCodeBtn = async () => {
         const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -147,15 +131,9 @@ export default function Consulta(){
 
     async function checkMultiPermissions() {
         const { status } = await BarCodeScanner.getPermissionsAsync();
-          
         
-        if (status !== 'granted') {
-         console.log("Nao tem permissao")
-        }
-        else{
-            console.log("ja tem permissao")
-        }
-      }
+        return status;
+    }
   
   
     const handleBarCodeScanned = ({ type, data }) => {
@@ -179,9 +157,13 @@ export default function Consulta(){
     };
 
     const test = async () => {
-        await scanCodeBtn();
-        setShowView(true);
-        console.log(showView);
+       const res = await checkMultiPermissions();
+       if(res === 'granted'){
+           setShowView(true);
+       }else{
+           await scanCodeBtn();
+       }
+       
     }
    
     // if (hasPermission === null) {
@@ -192,7 +174,7 @@ export default function Consulta(){
     // }
    
     return(
-        <Container>
+        <Container style={showView ? styles.container : ''}>
              
              {showView &&  
               
@@ -202,7 +184,7 @@ export default function Consulta(){
                         style={[StyleSheet.absoluteFillObject, styles.container]}                
                     >
                    
-                    <BarcodeMask edgeColor="#ee2c25" showAnimatedLine/>
+                    <BarcodeMask edgeColor="#62B1F6" showAnimatedLine/>
                     </BarCodeScanner>
                     {scanned && <BtnScanAgain onPress={() => setScanned(false)}>
                                      <TextBtn>Escanear novamente</TextBtn>
@@ -216,8 +198,9 @@ export default function Consulta(){
             <SearchArea>
              <SearchRow>
                 <InputComponent 
-                holder="Pesquise pelo nome do Produto..."
+                holder="Pesquisar..."
                 value={searchName , searchcod}
+               
                 onChangeText={t => {    
 
                     setSearchName(t);
@@ -275,8 +258,9 @@ const styles = StyleSheet.create({
     
         container: {
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
+            height: Dimensions.get('window').height,
+            width :Dimensions.get('window').width,
+            marginTop: 0,
    
         },
     

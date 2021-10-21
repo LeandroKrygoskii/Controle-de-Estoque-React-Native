@@ -12,17 +12,21 @@ import {
     ViewIconHeader,
     ViewIcon,
     ListAreaNull,
-    TextNull
+    TextNull,
+    
 } from './style';
 import {Alert, FlatList} from 'react-native';
 import Produtos from '../../services/Sqlite/CadastroProduto';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function EstoqueBaixo(){
 
     const [allData, setAllData] = useState([]);
     const [filterData, setFilterData] = useState();
+
+    const nav = useNavigation();
 
     useEffect(() => {
         getList();
@@ -39,6 +43,10 @@ export default function EstoqueBaixo(){
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const handleDetailProduct = (product) => {
+        nav.navigate("Detalhes do Produto" , {product})
     }
 
     const renderItem = useCallback (({item}) =>  

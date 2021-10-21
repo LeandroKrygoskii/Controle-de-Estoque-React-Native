@@ -4,7 +4,7 @@ export const Container = styled.View`
  flex:1;
  background-color: #f2f2f2;
  align-items: center;
- 
+ margin-top: 35px;
 `;
 
 export const SearchArea = styled.View`

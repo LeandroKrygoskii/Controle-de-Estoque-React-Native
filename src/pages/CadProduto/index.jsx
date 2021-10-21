@@ -1,20 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import {Keyboarder,
+import {
     Container,
-    InputArea,
-    BtnCadastrar,
+    InputArea, 
     Inputs,
-    TextBtn,
     Title,
     TouchableWithout,
     ViewCode,
     BtnCode,
     InputCode,
     Main,
-    BtnScanAgain
+    BtnScanAgain,
+    TitleMain
     
 } from './style';
-import InputComponent from '../../components/InputComponent';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {TextInputMask} from 'react-native-masked-text';
 import {useNavigation} from '@react-navigation/native';
@@ -35,7 +33,7 @@ import {
     StyleSheet
   } from 'react-native';
 import { Alert } from 'react-native';
-import { View } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 
 export default function CadProduto({navigation}){
      
@@ -110,6 +108,7 @@ export default function CadProduto({navigation}){
       
       function handleInputFocusName() {
         setIsFocusName(true);
+      
       }
     
       function handleInputFocusValor() {
@@ -151,6 +150,7 @@ export default function CadProduto({navigation}){
       function handleInputChangeQuantitymin(quantitymin){
         setIsFilledQuantityMin(!!quantitymin);
         setQuantityMin(quantitymin)
+        
       }
 
       
@@ -182,13 +182,19 @@ export default function CadProduto({navigation}){
          
         //console.log(name, quantity, quantitymin, value, desc, codigo, selectedCategoria, peso)
         if(name && quantity && quantitymin && value && codigo && peso && selectedCategoria != undefined){
-          const pesoReplace = peso.replace(",",".");
-          const response = await CadastroProduto.createProduto({codBar: codigo, nome: name , descricao: desc, peso: pesoReplace, quantidade:quantity, qtMin:quantitymin, valor:value, id_categoria: selectedCategoria });
-          console.log(response);
+          
+          if(quantity < 0) return alert("A quantidade não pode ser menor que zero.")
+          const pesoReplace = peso.replace(" Kg","");
+          const valorReplace = value.replace('R$','');
+          const changeVirgula = valorReplace.replace(',', '.')
+          const convertValue = parseFloat(changeVirgula);
+         
+          const response = await CadastroProduto.createProduto({codBar: codigo, nome: name , descricao: desc, peso: pesoReplace, quantidade:quantity, qtMin:quantitymin, valor:convertValue, id_categoria: selectedCategoria });
+          //console.log(response);
           
           if(response > 0){
-            Alert.alert("Cadastro bem sucedido")
-            nav.navigate("Home")
+            Alert.alert("Produto Cadastrado ✅", "Cadastro bem sucedido")
+            nav.navigate("HomeScreen")
           }else{
             Alert.alert("Algo deu errado ao cadastrar, verfique se não existe caracteres especiais nos campos.")
           }
@@ -199,14 +205,7 @@ export default function CadProduto({navigation}){
   
       }
 
-      async function getCategoria(){
-            
-        const response = await Categorias.selectAll();
-        
-        setDataCategoria(response);
-        //console.log("Cadastro de produtos getCategeoria" , response);
-      
-      }
+   
 
 
     //SCAN BARCODE//
@@ -214,27 +213,24 @@ export default function CadProduto({navigation}){
     const [scanned, setScanned] = useState(false);
     const [showView ,setShowView] = useState(false);
     
-    useEffect(() => {
-        checkMultiPermissions();
-        //scanCodeBtn();
-    },[])
+    // useEffect(() => {
+    //     checkMultiPermissions();
+    //     //scanCodeBtn();
+    // },[])
 
     const scanCodeBtn = async () => {
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         setHasPermission(status === 'granted');
+
+        if(status === 'granted'){
+          setShowView(true)
+      }
     }
 
     async function checkMultiPermissions() {
-        const { status } = await BarCodeScanner.getPermissionsAsync(
-          
-        );
-        if (status !== 'granted') {
-         console.log("Nao tem permissao")
-        }
-        else{
-            console.log("ja tem permissao")
-            console.log(status);
-        }
+        const { status } = await BarCodeScanner.getPermissionsAsync();
+
+         return status;
       }
   
   
@@ -259,8 +255,14 @@ export default function CadProduto({navigation}){
     };
 
     const showViewScan = async () => {
-       await scanCodeBtn(); 
+       const res = await checkMultiPermissions();
+       
+       if(res === 'granted'){
         setShowView(true);
+       }else{
+         await scanCodeBtn();
+       }
+        
         //console.log(showView);
     }
     
@@ -294,6 +296,7 @@ export default function CadProduto({navigation}){
                   
                    {!showView &&  
                 <InputArea>
+                <TitleMain>Novo produto</TitleMain>
                     <ViewCode
                       
                       style={[
@@ -304,6 +307,7 @@ export default function CadProduto({navigation}){
                          keyboardType="numeric"
                         placeholder="Código"
                         value={codigo}
+                        
                         onChangeText={handleInputChangeCodigo}
                         onBlur={handleInputBlurCodigo}
                         onFocus={handleInputFocusCodigo}
@@ -323,6 +327,7 @@ export default function CadProduto({navigation}){
                      onvalueChange= {(value) => {
                        
                        if(value){
+                         if(value === 0) return alert('Escolha uma categoria')
                          setSelectCategoria(value);                        
                        }
                        
@@ -330,74 +335,94 @@ export default function CadProduto({navigation}){
                     />
 
 
-
+               <View style={{width:'100%'}}> 
+                    <Text style={isFocusName || isFilledName ? styles.labelStyle2 : styles.labelStyle}>Nome do Produto</Text>
                     <Inputs
                     style={[
                         (isFocusName || isFilledName) && {borderColor: '#32B768'}
                      ]}
-                        placeholder="Nome do Produto"
                         value={name}
                         onChangeText={handleInputChangeName}
                         onBlur={handleInputBlurName}
                         onFocus={handleInputFocusName}
                      />
+                </View>
 
+                  <View style={{width:'100%'}}> 
+                    <Text style={isFocusDesc || isFilledDesc ? styles.labelStyle2 : styles.labelStyle}>Pequena Descrição</Text>
                     <Inputs
                     style={[
                         (isFocusDesc || isFilledDesc) && {borderColor: '#32B768'}
                      ]}
-                        placeholder="Pequena Descrição"
+                        
                         value={desc}
                         onChangeText={handleInputChangeDesc}
                         onBlur={handleInputBlurDesc}
                         onFocus={handleInputFocusDesc}
                      />
+                   </View>
 
+                  <View style={{width:'100%'}}> 
+                    <Text style={isFocusQuantity || isFilledQuantity ? styles.labelStyle2 : styles.labelStyle}>Quantidade em estoque</Text>     
                     <Inputs 
                     style={[
                         (isFocusQuantity || isFilledQuantity) && {borderColor: '#32B768'}
                      ]}
-                        placeholder="Quantidade em estoque"
+                        
                         value={quantity}
                         keyboardType="numeric"
                         onChangeText={handleInputChangeQuantity}
                         onBlur={handleInputBlurQuantity}
                         onFocus={handleInputFocusQuantity}
                         />
-
+                  </View>
                  
-
+                  <View style={{width:'100%'}}> 
+                    <Text style={isFocusQuantityMin || isFilledQuantityMin ? styles.labelStyle2 : styles.labelStyle}>Quantidade mínima(para alerta)</Text>   
                     <Inputs
                       style={[
                           (isFocusQuantityMin || isFilledQuantityMin) && {borderColor: '#32B768'}
                       ]}
-                          placeholder="Quantidade Minima(para alerta-lo)"
+                          
                           value={quantitymin}
                           keyboardType="numeric"
                           onChangeText={handleInputChangeQuantitymin}
                           onBlur={handleInputBlurQuantityMin}
                           onFocus={handleInputFocusQuantityMin}
                       />
-
+                  </View>
                 
-                    <Inputs
-                      style={[
+                <View style={{width:'100%'}}> 
+                    <Text style={isFocusPeso || isFilledPeso ? styles.labelStyle2 : styles.labelStyle}>Peso unidade</Text>   
+                    <TextInputMask
+                      style={[styles.InputStyles,
                           (isFocusPeso || isFilledPeso) && {borderColor: '#32B768'}
-                      ]}
-                          placeholder="peso"
-                          keyboardType="numeric"
-                          value={peso}
+                      ]}  
+                       value={peso}
+                          type={'money'}
+                          options={{
+                              precision: 1,
+                              separator: '.',
+                              delimiter: '.',
+                              unit: '',
+                              suffixUnit: 'Kg'
+                          }}
+                          
+                          
                           onChangeText={handleInputChangePeso}
                           onBlur={handleInputBlurPeso}
                           onFocus={handleInputFocusPeso}
                       />
+                </View> 
 
+                <View style={{width:'100%'}}> 
+                    <Text style={isFocusValor || isFilledValor ? styles.labelStyle2 : styles.labelStyle}>Valor unidade</Text>   
                     <TextInputMask
                       
                       style={[styles.InputStyles,
                           (isFocusValor || isFilledValor) && {borderColor: '#32B768'}
                         ]}
-                          placeholder="Valor Unitário"
+                          
                           value={value}
                           type={'money'}
                           options={{
@@ -411,8 +436,12 @@ export default function CadProduto({navigation}){
                           onBlur={handleInputBlurValor}
                           onFocus={handleInputFocusValor}
                       /> 
+                </View>
+                     
 
-                        <BtnConfirm text="Cadastrar" onPress={() => handleConfirm()}/> 
+                  <BtnConfirm text="Cadastrar" onPress={() => handleConfirm()}/> 
+
+                      
                </InputArea>
               }
           </Container>
@@ -435,9 +464,8 @@ const styles = StyleSheet.create({
     },
     container: {
       flex: 1,
-      
-      alignItems:'center',
-      justifyContent: 'center',
+      height: Dimensions.get('window').height,
+      width :Dimensions.get('window').width,
       
       
    },
@@ -453,6 +481,21 @@ const styles = StyleSheet.create({
         height: 1,
         width: '80%', 
     },
+
+    labelStyle : {
+      position: 'absolute',
+      left: 10,
+      top: 60,
+      fontSize: 18,
+      color: '#7f8f85',
+  },
+  labelStyle2 : {
+      position: 'absolute',
+      left: 0,
+      top:18, 
+      fontSize: 18,
+      color: '#7f8f85',
+  } 
  });
 
  
